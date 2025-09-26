@@ -2,44 +2,40 @@
 #include <stdlib.h>
 #include <string.h>
 
- //maximize boar size (change as needed)
-char board[10][10];
+#define MAX_SIZE 10
+char **board;
 int N;
 
+//common symbols
+char symbols[3] = {'X', 'O', 'Z'};
+
+//----------------------Board Setup---------------------------
 void initializedBoard(int size){
     N = size;
-    for(int i = 0; i < N; i++){
+    board = (char **)malloc(N * sizeof(char *));
+    for (int i = 0; i < N; i++){
+        board[i] = (char *)malloc(N * sizeof(char));
         for (int j = 0; j < N; j++){
             board[i][j] = ' ';
+        
         }
     }
 }
-void printBoard() {
-    for(int i = 0; i < N; i++){
-        for(int j = 0; j < N; j++){
-            printf("[%c]", board[i][j]);
-        }
-        printf("\n");
-    }
-}
-
-int main(){
-    initializedBoard(3);   // create 3*3 board
-    printBoard();
-    return 0;   //
+void freeBoard() {
+    for(int i = 0; i < N; i++) free(board[i]);
+    free(board);
 }
 
 void displayBoard() {
+    printf("\n"); //print row
     for (int i = 0; i < N; i++) {
-        //print row
-        for (int j = 0; j < N; j++){
+       for (int j = 0; j < N; j++){
          printf(" %c ", board[i][j]);
          if(j <N - 1) pritnf("|");   
         }
-        printf("\n");
 
-        //print seperator row
-        if(i < N - 1){
+        printf("\n"); //print seperator row
+         if(i < N - 1){
             for(int j = 0; j < N; j++){
                 printf("----");
                 if(j < N - 1) printf("+");
@@ -50,7 +46,7 @@ void displayBoard() {
     printf("\n");
 }
 
-//check validity of move
+//-------------------Validation----------------------------
 int isValidMove(int row, int col){
     //check if row and col are inside the board
     if(row < 0 || row >= N ) return 0;
@@ -68,8 +64,8 @@ int makeMove(int row, int col, char symbol){
     }
     return 0; //invalid
 }
-//log moves to File
 
+//----------------------Logging----------------------------
 void logMove(int player, int row, int col){
     FILE *fp = fopen("move_log.txt", "a");
     if(fp) {
@@ -78,6 +74,7 @@ void logMove(int player, int row, int col){
     }
 
 }
+//---------------------Win check---------------------------
 int checkWin(char symbol){
     for(int i = 0; i < N; i++){
         int rowWin = 1, colWin = 1;
@@ -94,6 +91,7 @@ int diag1 = 1, diag2 = 1;
 }
 return diag1 || diag2;
 
+//------------------------Draw check------------------------------
 int checkDraw() {
     for (int i = 0; i < N; i++)
       for (int j = 0; j < N; j++)
@@ -102,10 +100,7 @@ int checkDraw() {
 
 } 
 
-void freeBoard() {
-    for(int i = 0; i < N; i++) free(board[i]);
-    free(board);
-}
+
 
 
 
