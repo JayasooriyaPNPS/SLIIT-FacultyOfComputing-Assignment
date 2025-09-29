@@ -100,7 +100,33 @@ int checkDraw() {
 
 } 
 
+//-----------------------Get user move---------------------------
+void getUserMove(int player){
+	int row, col;
+	while (1) {
+		printf("Player %d (%c), enter your move (row col): ", player, symbols[player - 1]);
+		scanf("%d %d", &row, &col);
+		row--;
+		col--;
+		if(isValidMove(row, col)){
+			board[row][col] = symbols[player - 1];
+			logMove(player, row,col);
+			break;
+		}else{
+			printf("Invalid move,Try again.\n");
+		}
+	}
+}
 
 
-
-
+void getComputerMove(){
+	int row, col;
+	do{
+		row = rand() % N;
+		col = rand() % N;
+	}
+	while (!isValidMove(row, col));
+	board[row][col] = symbols[1];
+	printf("Computer played at (%d, %d)\n", row +1, col +1);
+	logMove(2, row, col);
+}
