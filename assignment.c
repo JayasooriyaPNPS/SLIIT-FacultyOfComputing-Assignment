@@ -130,3 +130,74 @@ void getComputerMove(){
 	printf("Computer played at (%d, %d)\n", row +1, col +1);
 	logMove(2, row, col);
 }
+
+//---------------------Game modes---------------------------------
+void playTwoPlayers(){
+	int currentPlayer = 1;
+	while (1) {
+		displayBoard();
+		getUserMove(currentPlayer);
+		if (checkWin(symbols[currentPlayer - 1])) {
+			displayBoard();
+			printf("Plater %d (%c) wins!\n", currentPlayer, symbols[currentPlayer - 1]);
+			break;
+		}
+		if (checkDraw()) {
+			displayboard();
+			printf("It's a draw!\n");
+			break;
+		}
+		currentPlayer = 3 - currentPlayer;
+	}
+}
+
+void playVsComputer() {
+	while (1) {
+		displayBoard();
+		getUserMove(1);
+		if (checkWin(symbols[0])) {
+			displayBoard();
+			printf("You Win!\n");
+			break;
+		}
+		if (checkDraw()) {
+			displayBoard();
+			printf("It's a draw!\n");
+			break;
+		}
+		displayBoard();
+		getComputerMove();
+		if (checkWin(symbols[1])) {
+			displayBoard();
+			printf("Computer wins!\n");
+			break;
+		}
+		if (checkDraw()) {
+			displayBoard();
+			printf("It's a draw!\n");
+			break;
+		}
+	}
+}
+
+void playThreePlayer() {
+	int currentPlayer = 1;
+	while (1) {
+		displayBoard();
+		getUserMove(currentPlayer);
+		if (checkWin(symbols[currentPlayer - 1])) {
+			displayBoard();
+			printf("Player %d (%c) wins!\n", currentPlayer, symbols[currentPlayer - 1]);
+			break;
+		}
+		if (checkDraw()){
+			displayBoard();
+			printf("It's a draw!\n");
+			break;
+		}
+		currentPlayer = (currentPlayer % 3) + 1;
+	}
+}
+
+			
+
