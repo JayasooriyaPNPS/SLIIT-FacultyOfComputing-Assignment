@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #define MAX_SIZE 10
@@ -10,19 +11,19 @@ int N;
 char symbols[3] = {'X', 'O', 'Z'};
 
 //----------------------Board Setup---------------------------
-void initializedBoard(int size){
+void initializeBoard(int size) {
     N = size;
     board = (char **)malloc(N * sizeof(char *));
-    for (int i = 0; i < N; i++){
+    for (int i = 0; i < N; i++) {
         board[i] = (char *)malloc(N * sizeof(char));
-        for (int j = 0; j < N; j++){
+        for (int j = 0; j < N; j++) {
             board[i][j] = ' ';
         
         }
     }
 }
 void freeBoard() {
-    for(int i = 0; i < N; i++) free(board[i]);
+    for (int i = 0; i < N; i++) free(board[i]);
     free(board);
 }
 
@@ -37,7 +38,7 @@ void displayBoard() {
         printf("\n"); //print seperator row
          if(i < N - 1){
             for(int j = 0; j < N; j++){
-                printf("----");
+                printf("---");
                 if(j < N - 1) printf("+");
             }
             printf("\n");
@@ -48,62 +49,51 @@ void displayBoard() {
 
 //-------------------Validation----------------------------
 int isValidMove(int row, int col){
-    //check if row and col are inside the board
-    if(row < 0 || row >= N ) return 0;
-    if(col < 0 || col >= N) return 0;
-    if(board[row][col] != ' ') return 0;
-    
-    return 1; //valid
-}
-
-//make a move
-int makeMove(int row, int col, char symbol){
-    if(isValidMove(row, col)){
-        board[row][col] = symbol;
-        return 1;  //success
-    }
-    return 0; //invalid
+    return row >= 0 && row < N && col >= 0 && col < N && board[row][col] == ' ';
 }
 
 //----------------------Logging----------------------------
-void logMove(int player, int row, int col){
+void logMove(int player, int row, int col) {
     FILE *fp = fopen("move_log.txt", "a");
     if(fp) {
-        fprintf(fp, "Player %d >> (%d, %d)\n", player, row + 1, col + 1);
+        fprintf(fp, "Player %d (%c) -> (%d, %d)\n", player, symbols[player - 1], row + 1, col + 1);
         fclose(fp);
     }
 
 }
 //---------------------Win check---------------------------
-int checkWin(char symbol){
+int checkWin(char symbol) {
 	int rowWin = 1;
 	int colWin = 1;
     for(int i = 0; i < N; i++){
         int rowWin = 1, colWin = 1;
         for(int j = 0; j < N; j++){
             if(board[i][j] != symbol) rowWin = 0;
-            if(board[i][j] != symbol) colWin = 0;        }
+            if(board[j][i] != symbol) colWin = 0;        }
     }
     if (rowWin || colWin) return 1;
 }
 
-int checkDiagonalWin(char board[][N], int N, char symbol) {
+int checkDiagonalWinn(char symbols) {
 	int diag1 = 1, diag2 = 1;
         for (int i = 0; i < N; i++){
-            if(board[i][i] != symbol) diag1 = 0;
-            if(board[i][N - i - 1] != symbol) diag2 = 0;
+            if(board[i][i] != symbols) diag1 = 0;
+            if(board[i][N - i - 1] != symbols) diag2 = 0;
 
+	    }
 return diag1 || diag2;
    }
 
+
 //------------------------Draw check------------------------------
 int checkDraw() {
-    for (int i = 0; i < N; i++)
-      for (int j = 0; j < N; j++)
+    for (int i = 0; i < N; i++){
+      for (int j = 0; j < N; j++){
        if(board[i][j] == ' ') return 0;
     return 1;
-
-} 
+      }
+    }
+}
 
 //-----------------------Get user move---------------------------
 void getUserMove(int player){
@@ -124,15 +114,15 @@ void getUserMove(int player){
 }
 
 
-void getComputerMove(){
+void getComputerMove(int player){
 	int row, col;
 	do{
 		row = rand() % N;
 		col = rand() % N;
 	}
 	while (!isValidMove(row, col));
-	board[row][col] = symbols[1];
-	printf("Computer played at (%d, %d)\n", row +1, col +1);
+	board[row][col] = symbols[player - 1];
+	printf("Computer (Player %d) played at (%d, %d)\n",player, row +1, col +1);
 	logMove(2, row, col);
 }
 
@@ -144,7 +134,7 @@ void playTwoPlayers(){
 		getUserMove(currentPlayer);
 		if (checkWin(symbols[currentPlayer - 1])) {
 			displayBoard();
-			printf("Plater %d (%c) wins!\n", currentPlayer, symbols[currentPlayer - 1]);
+			printf("Player %d (%c) wins!\n", currentPlayer, symbols[currentPlayer - 1]);
 			break;
 		}
 		if (checkDraw()) {
@@ -171,7 +161,7 @@ void playVsComputer() {
 			break;
 		}
 		displayBoard();
-		getComputerMove();
+		getComputerMove(2);
 		if (checkWin(symbols[1])) {
 			displayBoard();
 			printf("Computer wins!\n");
@@ -189,15 +179,18 @@ void playThreePlayer() {
 	int currentPlayer = 1;
 	while (1) {
 		displayBoard();
-		getUserMove(currentPlayer);
+		if (currentPlayer == 1)
+			getUserMove(currentPlayer);
+		else
+			getComputerMove(currentPlayer);
 		if (checkWin(symbols[currentPlayer - 1])) {
 			displayBoard();
 			printf("Player %d (%c) wins!\n", currentPlayer, symbols[currentPlayer - 1]);
 			break;
 		}
-		if (checkDraw()){
+		if (checkDraw()) {
 			displayBoard();
-			printf("It's a draw!\n");
+			printf("It's a Draw!\n");
 			break;
 		}
 		currentPlayer = (currentPlayer % 3) + 1;
@@ -226,7 +219,7 @@ int main (void) {
 	FILE *fp = fopen("move_log.txt", "w");
 	if (fp) fclose(fp);
 
-	initializedBoard(size);
+	initializeBoard(size);
 
 	if (mode == 1) playTwoPlayers();
 	else if (mode == 2) playVsComputer();
@@ -239,5 +232,4 @@ int main (void) {
 
 }
 
-}
 
