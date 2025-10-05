@@ -64,13 +64,15 @@ void logMove(int player, int row, int col) {
 //---------------------Win check---------------------------
 int checkWin(char symbol) {
     for(int i = 0; i < N; i++){
-        int rowWin = 1, colWin = 1;
+        int rowWin = 1;
+	int colWin = 1;
         for(int j = 0; j < N; j++){
             if(board[i][j] != symbol) rowWin = 0;
             if(board[j][i] != symbol) colWin = 0;        }
-    }
+    
     if (rowWin || colWin) return 1;
-}
+    }
+
 return 0;
 }
 
@@ -133,12 +135,13 @@ void playTwoPlayers(){
 	while (1) {
 		displayBoard();
 		getUserMove(currentPlayer);
-		if (checkWin(symbols[currentPlayer - 1])) || checkDiagonalWin 
-			(symbols[currentPlayer - 1]) {
+		if (checkWin(symbols[currentPlayer - 1]) || checkDiagonalWin) 
+			(symbols[currentPlayer - 1]); { 
 			displayBoard();
 			printf("Player %d (%c) wins!\n", currentPlayer, symbols[currentPlayer - 1]);
 			break;
-		}
+			}
+		
 		if (checkDraw()) {
 			displayBoard();
 			printf("It's a draw!\n");
