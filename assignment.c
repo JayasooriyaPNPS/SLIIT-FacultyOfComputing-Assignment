@@ -135,8 +135,8 @@ void playTwoPlayers(){
 	while (1) {
 		displayBoard();
 		getUserMove(currentPlayer);
-		if (checkWin(symbols[currentPlayer - 1]) || checkDiagonalWin) 
-			(symbols[currentPlayer - 1]); { 
+		if (checkWin(symbols[currentPlayer - 1]) || checkDiagonalWin 
+			(symbols[currentPlayer - 1])); { 
 			displayBoard();
 			printf("Player %d (%c) wins!\n", currentPlayer, symbols[currentPlayer - 1]);
 			break;
