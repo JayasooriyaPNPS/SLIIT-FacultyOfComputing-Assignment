@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <time.h>
 
 #define MAX_SIZE 10
 char **board;
@@ -31,7 +31,7 @@ void displayBoard() {
     for (int i = 0; i < N; i++) {
        for (int j = 0; j < N; j++){
          printf(" %c ", board[i][j]);
-         if(j <N - 1) pritnf("|");   
+         if(j <N - 1) printf("|");   
         }
 
         printf("\n"); //print seperator row
@@ -52,9 +52,9 @@ int isValidMove(int row, int col){
     if(row < 0 || row >= N ) return 0;
     if(col < 0 || col >= N) return 0;
     if(board[row][col] != ' ') return 0;
-    }
+    
     return 1; //valid
-
+}
 
 //make a move
 int makeMove(int row, int col, char symbol){
@@ -76,6 +76,8 @@ void logMove(int player, int row, int col){
 }
 //---------------------Win check---------------------------
 int checkWin(char symbol){
+	int rowWin = 1;
+	int colWin = 1;
     for(int i = 0; i < N; i++){
         int rowWin = 1, colWin = 1;
         for(int j = 0; j < N; j++){
@@ -84,12 +86,15 @@ int checkWin(char symbol){
     }
     if (rowWin || colWin) return 1;
 }
-int diag1 = 1, diag2 = 1;
-   for(int i = 0; i < N; i++){
-    if(board[i][j] != symbol) diag1 = 0;
-    if(board[i][N - i - 1] != symbol) diag2 = 0;
-}
+
+int checkDiagonalWin(char board[][N], int N, char symbol) {
+	int diag1 = 1, diag2 = 1;
+        for (int i = 0; i < N; i++){
+            if(board[i][i] != symbol) diag1 = 0;
+            if(board[i][N - i - 1] != symbol) diag2 = 0;
+
 return diag1 || diag2;
+   }
 
 //------------------------Draw check------------------------------
 int checkDraw() {
@@ -143,7 +148,7 @@ void playTwoPlayers(){
 			break;
 		}
 		if (checkDraw()) {
-			displayboard();
+			displayBoard();
 			printf("It's a draw!\n");
 			break;
 		}
@@ -199,5 +204,40 @@ void playThreePlayer() {
 	}
 }
 
-			
+//----------------------------Main------------------------------
+int main (void) {
+	int size, mode;
+	srand(time(NULL));
+
+	printf("Enter board size (3 to 10): ");
+	scanf("%d", &size);
+	if (size < 3 || size > 10) {
+		printf("Invalid size.\n");
+		return 1;
+	}
+
+	printf("Select mode:\n");
+	printf("1. Two player (User vs User)\n");
+	printf("2. User vs Computer\n");
+	printf("3. Three Player\n");
+	printf("Choice: ");
+	scanf("%d", &mode);
+
+	FILE *fp = fopen("move_log.txt", "w");
+	if (fp) fclose(fp);
+
+	initializedBoard(size);
+
+	if (mode == 1) playTwoPlayers();
+	else if (mode == 2) playVsComputer();
+	else if (mode == 3) playThreePlayer();
+	else 
+		printf("Invalid mode selected.\n");
+
+	freeBoard();
+	return 0;
+
+}
+
+}
 
