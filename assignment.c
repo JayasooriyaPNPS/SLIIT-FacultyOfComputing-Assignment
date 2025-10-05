@@ -63,8 +63,6 @@ void logMove(int player, int row, int col) {
 }
 //---------------------Win check---------------------------
 int checkWin(char symbol) {
-	int rowWin = 1;
-	int colWin = 1;
     for(int i = 0; i < N; i++){
         int rowWin = 1, colWin = 1;
         for(int j = 0; j < N; j++){
@@ -73,12 +71,14 @@ int checkWin(char symbol) {
     }
     if (rowWin || colWin) return 1;
 }
+return 0;
+}
 
-int checkDiagonalWinn(char symbols) {
+int checkDiagonalWin(char symbol) {
 	int diag1 = 1, diag2 = 1;
         for (int i = 0; i < N; i++){
-            if(board[i][i] != symbols) diag1 = 0;
-            if(board[i][N - i - 1] != symbols) diag2 = 0;
+            if(board[i][i] != symbol) diag1 = 0;
+            if(board[i][N - i - 1] != symbol) diag2 = 0;
 
 	    }
 return diag1 || diag2;
@@ -90,9 +90,10 @@ int checkDraw() {
     for (int i = 0; i < N; i++){
       for (int j = 0; j < N; j++){
        if(board[i][j] == ' ') return 0;
-    return 1;
       }
     }
+    return 1;
+    
 }
 
 //-----------------------Get user move---------------------------
@@ -123,7 +124,7 @@ void getComputerMove(int player){
 	while (!isValidMove(row, col));
 	board[row][col] = symbols[player - 1];
 	printf("Computer (Player %d) played at (%d, %d)\n",player, row +1, col +1);
-	logMove(2, row, col);
+	logMove(player, row, col);
 }
 
 //---------------------Game modes---------------------------------
@@ -132,7 +133,8 @@ void playTwoPlayers(){
 	while (1) {
 		displayBoard();
 		getUserMove(currentPlayer);
-		if (checkWin(symbols[currentPlayer - 1])) {
+		if (checkWin(symbols[currentPlayer - 1])) || checkDiagonalWin 
+			(symbols[currentPlayer - 1]) {
 			displayBoard();
 			printf("Player %d (%c) wins!\n", currentPlayer, symbols[currentPlayer - 1]);
 			break;
@@ -150,11 +152,12 @@ void playVsComputer() {
 	while (1) {
 		displayBoard();
 		getUserMove(1);
-		if (checkWin(symbols[0])) {
+		if (checkWin(symbols[0]) || checkDiagonalWin(symbols[0])) {
 			displayBoard();
 			printf("You Win!\n");
 			break;
 		}
+		
 		if (checkDraw()) {
 			displayBoard();
 			printf("It's a draw!\n");
@@ -162,7 +165,7 @@ void playVsComputer() {
 		}
 		displayBoard();
 		getComputerMove(2);
-		if (checkWin(symbols[1])) {
+		if (checkWin(symbols[1]) || checkDiagonalWin(symbols[1])) {
 			displayBoard();
 			printf("Computer wins!\n");
 			break;
@@ -183,7 +186,8 @@ void playThreePlayer() {
 			getUserMove(currentPlayer);
 		else
 			getComputerMove(currentPlayer);
-		if (checkWin(symbols[currentPlayer - 1])) {
+		if (checkWin(symbols[currentPlayer - 1]) || checkDiagonalWin
+				(symbols[currentPlayer - 1])) {
 			displayBoard();
 			printf("Player %d (%c) wins!\n", currentPlayer, symbols[currentPlayer - 1]);
 			break;
