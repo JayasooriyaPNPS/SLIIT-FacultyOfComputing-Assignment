@@ -49,7 +49,10 @@ void displayBoard() {
 
 //-------------------Validation----------------------------
 int isValidMove(int row, int col){
-    return row >= 0 && row < N && col >= 0 && col < N && board[row][col] == ' ';
+    if (row < 0 || row >= N) return 0;
+    if (col < 0 || col >= N) return 0;
+    if (board[row][col] != ' ') return 0;
+    return 1;
 }
 
 //----------------------Logging----------------------------
@@ -136,7 +139,7 @@ void playTwoPlayers(){
 		displayBoard();
 		getUserMove(currentPlayer);
 		if (checkWin(symbols[currentPlayer - 1]) || checkDiagonalWin 
-			(symbols[currentPlayer - 1])); { 
+			(symbols[currentPlayer - 1])) { 
 			displayBoard();
 			printf("Player %d (%c) wins!\n", currentPlayer, symbols[currentPlayer - 1]);
 			break;
